@@ -1,0 +1,31 @@
+- First pre-process the master .csv files to extract information for the SF Bay only:
+     Below, inf is the input master csv:
+     add_station_code(inf): Adds a unique station code for each measurement station and creates a new csv with _staID attached to the name (and _master removed)
+     bay_file = box_coords(inf): Processes the above generated csv and retains data only withing the SF Bay coordinates. Generates a new csv with the prefix bay_. This is the file used for the rest of the analysis.
+
+
+- To answer the pier contamination question:
+answer_pier_contamination(bay_file1, bay_file2, fish=None, start_date=OLDEST_DATE, radius=RADIUS):
+   bay_file1: spreadsheet with tissue measurements (mercury or pcb)
+   bay_file2: spreadsheet with sediment measurements (mercury or pcb)
+   Returns a dictionary with keys piers from the global PIER_DICT and values a list of average tissue value and sediment value. This dictionary can be used in excel e.g. to plot the data.
+   The method can also be used for specific fish, i.e. return contamination data per pier per fish.
+   start_date is the oldest date used from the spreadsheets
+   radius is in miles around the pier, whithin which data is analyzed
+
+
+- To answer the correlation question:
+answer_correlation(bay_file1, bay_file2, outf, radius=RADIUS, thresh=THRESH):
+   bay_file1: spreadsheet with tissue measurements (mercury or pcb)
+   bay_file2: spreadsheet with sediment measurements (mercury or pcb)
+   outf: Output file containing pairs of sediment and tissue values from same region
+   This method groups stations with tissue and sediment measurements that are within cirular regions with given radius, averages the results of each and saves the averaged pair of values (sediment_value, tissue_value) into file outf
+
+
+- To do the longitudinal study:
+fish_by_year_dict(fname, rect=SOUTH_BAY_RECT, fish=None, radius=None):
+   fname: spreadsheet with relevant measurement (tissue or sediment, pcb or mercury)
+   rect: rectangular area of the SF Bay used to analyze data (could be all bay)
+   fish: list of fish to be included
+   radius: if rect is a single coordinate, then the area analyzed is a circular region with this radius, centered aroud rect
+   This method creates a dictionary with keys years and values the average measurement for the given fish. If more than one fish are given the average is across all of them. The method provides the flexibility to limit the area analyzed in some rectangular area of the Bay (given by the diagonal pair of latitudes and longitudes), or in a circular region of given radius with center the single coordinate given by the input rect. 
